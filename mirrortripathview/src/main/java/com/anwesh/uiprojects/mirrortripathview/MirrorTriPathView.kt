@@ -124,5 +124,46 @@ class MirrorTriPathView(ctx : Context) : View(ctx) {
                 }
             }
         }
+
+        data class MTPNode(var i : Int, val state : State = State()) {
+
+            private var next : MTPNode? = null
+            private var prev : MTPNode? = null
+
+            init {
+                addNeighbor()
+            }
+
+            fun addNeighbor() {
+                if (i < colors.size - 1) {
+                    next = MTPNode(i + 1)
+                    next?.prev = this
+                }
+            }
+
+            fun draw(canvas : Canvas, paint : Paint) {
+                canvas.drawMTPNode(i, state.scale, paint)
+            }
+
+            fun update(cb : (Float) -> Unit) {
+                state.update(cb)
+            }
+
+            fun startUpdating(cb : () -> Unit) {
+                state.startUpdating(cb)
+            }
+
+            fun getNext(dir : Int, cb : () -> Unit) : MTPNode {
+                var curr : MTPNode? = prev
+                if (dir == 1) {
+                    curr = next
+                }
+                if (curr != null) {
+                    return curr
+                }
+                cb()
+                return this
+            }
+        }
     }
 }
