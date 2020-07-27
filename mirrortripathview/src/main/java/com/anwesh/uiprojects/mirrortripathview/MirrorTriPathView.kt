@@ -27,9 +27,9 @@ fun Float.sinify() : Float = Math.sin(this * Math.PI).toFloat()
 
 fun Canvas.drawTriPath(i : Int, scale : Float, w : Float, h : Float, paint : Paint) {
     val sf : Float = scale.sinify()
-    val sfi : Float = scale.divideScale(i, parts)
-    val sfi1 : Float = scale.divideScale(0, divs)
-    val sfi2 : Float = scale.divideScale(1, divs)
+    val sfi : Float = sf.divideScale(i, parts)
+    val sfi1 : Float = sfi.divideScale(0, divs)
+    val sfi2 : Float = sfi.divideScale(1, divs)
     val k : Int = (i + 1) / 2
     val l : Int = i / 2
     val y : Float = (h / (1 + k)) * (2 * k - 1)
@@ -65,14 +65,16 @@ fun Canvas.drawMTPNode(i : Int, scale : Float, paint : Paint) {
 
 class MirrorTriPathView(ctx : Context) : View(ctx) {
 
-    override fun onDraw(canvas : Canvas) {
+    private val renderer : Renderer = Renderer(this)
 
+    override fun onDraw(canvas : Canvas) {
+        renderer.render(canvas)
     }
 
     override fun onTouchEvent(event : MotionEvent) : Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-
+                renderer.handleTap()
             }
         }
         return true
