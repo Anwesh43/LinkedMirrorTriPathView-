@@ -211,4 +211,13 @@ class MirrorTriPathView(ctx : Context) : View(ctx) {
             }
         }
     }
+
+    companion object {
+
+        fun create(activity : Activity) : MirrorTriPathView {
+            val view : MirrorTriPathView = MirrorTriPathView(activity)
+            activity.setContentView(view)
+            return view
+        }
+    }
 }
