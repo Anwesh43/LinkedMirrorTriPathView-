@@ -32,21 +32,24 @@ fun Canvas.drawTriPath(i : Int, scale : Float, w : Float, h : Float, paint : Pai
     val sfi2 : Float = sfi.divideScale(1, divs)
     val k : Int = (i + 1) / 2
     val l : Int = i / 2
+    val initY : Float = (h / (1 + k)) * ((i + 1) % 2)
     val y : Float = (h / (1 + k)) * (2 * k - 1)
-    val y1 : Float = y * sfi1
-    val y2 : Float = y * sfi2
-    val dx : Float = (1 - 2 * l) * (w / 2) * k
-    val x1 : Float = l * w / 2 + dx * sfi1
-    val x2 : Float = l * w / 2 + dx * sfi2
+    val y1 : Float = initY + y * sfi1
+    val y2 : Float = initY + y * sfi2
+    val dx : Float = (1 - 2 * l) * (w / 2 - w / 10) * k
+    val x1 : Float = l * (w / 2 - w / 10) + dx * sfi1
+    val x2 : Float = l * (w / 2 - w / 10) + dx * sfi2
     drawLine(x1, y1, x2, y2, paint)
 }
 
 fun Canvas.drawMirrorTriPath(scale : Float, w : Float, h : Float, paint : Paint) {
-    for (j in 0..1) {
+    for (i in 0..1) {
         save()
-        scale(1f - 2 * j, 1f)
-        translate(-w / 2, - h / 2)
-        drawTriPath(j, scale, w, h, paint)
+        scale(1f - 2 * i, 1f)
+        translate(-(w / 2 - w / 10), - h / 2)
+        for (j in 0..(parts - 1)) {
+            drawTriPath(j, scale, w, h, paint)
+        }
         restore()
     }
 }
