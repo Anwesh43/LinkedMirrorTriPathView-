@@ -96,74 +96,73 @@ class MirrorTriPathView(ctx : Context) : View(ctx) {
                 cb()
             }
         }
+    }
+    data class Animator(var view : View, var animated : Boolean = false) {
 
-        data class Animator(var view : View, var animated : Boolean = false) {
+        fun animate(cb : () -> Unit) {
+            if (animated) {
+                cb()
+                try {
+                    Thread.sleep(delay)
+                    view.invalidate()
+                } catch(ex : Exception) {
 
-            fun animate(cb : () -> Unit) {
-                if (animated) {
-                    cb()
-                    try {
-                        Thread.sleep(delay)
-                        view.invalidate()
-                    } catch(ex : Exception) {
-
-                    }
-                }
-            }
-
-            fun start() {
-                if (!animated) {
-                    animated = true
-                    view.postInvalidate()
-                }
-            }
-
-            fun stop() {
-                if (animated) {
-                    animated = false
                 }
             }
         }
 
-        data class MTPNode(var i : Int, val state : State = State()) {
-
-            private var next : MTPNode? = null
-            private var prev : MTPNode? = null
-
-            init {
-                addNeighbor()
+        fun start() {
+            if (!animated) {
+                animated = true
+                view.postInvalidate()
             }
+        }
 
-            fun addNeighbor() {
-                if (i < colors.size - 1) {
-                    next = MTPNode(i + 1)
-                    next?.prev = this
-                }
+        fun stop() {
+            if (animated) {
+                animated = false
             }
+        }
+    }
 
-            fun draw(canvas : Canvas, paint : Paint) {
-                canvas.drawMTPNode(i, state.scale, paint)
-            }
+    data class MTPNode(var i : Int, val state : State = State()) {
 
-            fun update(cb : (Float) -> Unit) {
-                state.update(cb)
-            }
+        private var next : MTPNode? = null
+        private var prev : MTPNode? = null
 
-            fun startUpdating(cb : () -> Unit) {
-                state.startUpdating(cb)
-            }
+        init {
+            addNeighbor()
+        }
 
-            fun getNext(dir : Int, cb : () -> Unit) : MTPNode {
-                var curr : MTPNode? = prev
-                if (dir == 1) {
-                    curr = next
-                }
-                if (curr != null) {
-                    return curr
-                }
-                cb()
-                return this
+        fun addNeighbor() {
+            if (i < colors.size - 1) {
+                next = MTPNode(i + 1)
+                next?.prev = this
             }
+        }
+
+        fun draw(canvas : Canvas, paint : Paint) {
+            canvas.drawMTPNode(i, state.scale, paint)
+        }
+
+        fun update(cb : (Float) -> Unit) {
+            state.update(cb)
+        }
+
+        fun startUpdating(cb : () -> Unit) {
+            state.startUpdating(cb)
+        }
+
+        fun getNext(dir : Int, cb : () -> Unit) : MTPNode {
+            var curr : MTPNode? = prev
+            if (dir == 1) {
+                curr = next
+            }
+            if (curr != null) {
+                return curr
+            }
+            cb()
+            return this
         }
     }
 }
